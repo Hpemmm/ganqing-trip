@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>国庆甘青自驾 · 舒适优化版</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f7f6f3;--card:#fff;--text:#2c2c2c;--sub:#6b6b6b;--accent:#d97742;
+  --green:#4a7c59;--red:#c0392b;--blue:#3a6b8c;--border:#e8e5df;
+  --day-even:#faf9f6;--day-odd:#f0ede7;--warn-bg:#fef5f0;
+}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+  background:var(--bg);color:var(--text);line-height:1.65;-webkit-font-smoothing:antialiased;
+  max-width:720px;margin:0 auto;padding:16px;min-height:100dvh;
+}
+nav{
+  position:sticky;top:0;z-index:100;background:rgba(247,246,243,0.92);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  padding:10px 0;display:flex;gap:8px;overflow-x:auto;border-bottom:1px solid var(--border);
+  margin-bottom:20px;scrollbar-width:none;
+}
+nav::-webkit-scrollbar{display:none}
+nav a{
+  flex-shrink:0;font-size:13px;padding:6px 14px;border-radius:20px;
+  background:var(--card);color:var(--sub);text-decoration:none;border:1px solid var(--border);
+  transition:all .2s;white-space:nowrap;
+}
+nav a.active,nav a:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.hero{text-align:center;padding:32px 8px 24px}
+.hero h1{font-size:26px;font-weight:800;letter-spacing:-.5px;color:var(--text);margin-bottom:6px}
+.hero .sub{font-size:14px;color:var(--sub)}
+.hero .tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:14px}
+.hero .tag{font-size:11px;padding:3px 10px;border-radius:12px;background:var(--day-even);border:1px solid var(--border);color:var(--sub)}
+.hero .tag.highlight{background:var(--green);color:#fff;border-color:var(--green)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 24px}
+.stat-card{background:var(--card);border-radius:16px;padding:14px 10px;text-align:center;border:1px solid var(--border)}
+.stat-card .val{font-size:22px;font-weight:700;color:var(--accent)}
+.stat-card .lbl{font-size:11px;color:var(--sub);margin-top:2px}
+.section{margin-bottom:28px}
+.section-title{font-size:18px;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.section-title::before{content:'';width:4px;height:20px;background:var(--accent);border-radius:2px}
+.day-card{background:var(--card);border-radius:18px;overflow:hidden;margin-bottom:14px;border:1px solid var(--border)}
+.day-header{padding:16px 18px 12px;display:flex;justify-content:space-between;align-items:flex-start}
+.day-label{font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.5px}
+.day-title{font-size:17px;font-weight:700;color:var(--text);margin-top:2px}
+.day-drive{font-size:12px;color:var(--sub);margin-top:2px}
+.day-badge{font-size:11px;padding:3px 10px;border-radius:10px;background:var(--green);color:#fff;flex-shrink:0}
+.day-body{padding:0 18px 16px}
+.day-section{margin-bottom:12px}
+.day-section h4{font-size:12px;font-weight:600;color:var(--sub);letter-spacing:.5px;margin-bottom:4px}
+.day-section p{font-size:14px;color:var(--text);line-height:1.7;white-space:pre-line}
+.day-section.warn p{color:var(--red)}
+.hotel-row{display:flex;justify-content:space-between;font-size:13px;color:var(--sub);padding:8px 18px;border-top:1px solid var(--border)}
+.hotel-row strong{color:var(--text)}
+.weather-badge{background:var(--warn-bg);border:1px solid #f0d5c0;border-radius:12px;padding:10px 14px;margin-top:10px;font-size:12px;color:#b8501e;white-space:pre-line}
+.risk-grid{display:grid;gap:10px}
+.risk-card{background:var(--card);border-radius:14px;padding:14px 16px;border:1px solid var(--border)}
+.risk-card.severe{border-left:4px solid var(--red)}
+.risk-card.moderate{border-left:4px solid #e67e22}
+.risk-card h4{font-size:14px;font-weight:600;margin-bottom:4px}
+.risk-card .meta{font-size:11px;color:var(--sub);margin-bottom:6px}
+.risk-card p{font-size:13px;color:var(--text);white-space:pre-line}
+.budget-table{background:var(--card);border-radius:16px;overflow:hidden;border:1px solid var(--border)}
+.budget-row{display:flex;justify-content:space-between;padding:12px 16px;font-size:14px;border-bottom:1px solid var(--border)}
+.budget-row:last-child{border-bottom:none;background:var(--day-even);font-weight:700}
+.budget-row .note{font-size:11px;color:var(--sub)}
+.budget-row .diff{font-size:12px;color:var(--green)}
+.hotel-list .hotel-item{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--card);border-radius:10px;margin-bottom:6px;border:1px solid var(--border);font-size:13px}
+.hotel-item .urgent{color:var(--red);font-weight:600;font-size:11px}
+.ticket-item{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 14px;background:var(--card);border-radius:10px;margin-bottom:6px;border:1px solid var(--border);font-size:13px}
+.ticket-item .deadline{font-size:11px;color:var(--red);font-weight:600;flex-shrink:0;margin-left:8px}
+.gear-grid{display:grid;gap:6px}
+.gear-item{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:var(--card);border-radius:10px;font-size:13px;border:1px solid var(--border)}
+.gear-item .must{color:var(--red);font-weight:600;font-size:11px;flex-shrink:0;margin-left:8px}
+.gear-item .opt{color:var(--sub);font-size:11px;flex-shrink:0;margin-left:8px}
+
+footer{text-align:center;padding:24px 0;font-size:12px;color:var(--sub);border-top:1px solid var(--border);margin-top:8px}
+@media(max-width:400px){
+  .hero h1{font-size:22px}.stats{gap:6px}.stat-card{padding:10px 6px}
+  .stat-card .val{font-size:18px}
+}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+<a href="#itinerary" class="active">行程</a>
+<a href="#risks">天气备选</a>
+<a href="#hotels">住宿</a>
+<a href="#budget">预算</a>
+<a href="#tickets">抢票</a>
+<a href="#gear">装备</a>
+
+</nav>
+
+<div class="hero">
+<h1>国庆甘青自驾 舒适优化版</h1>
+<p class="sub">10.1 - 10.8 · 8天7晚 · 双人一车 · 兰州进敦煌出</p>
+<div class="tags">
+<span class="tag highlight">人均约5,650元</span>
+<span class="tag">总里程~1,700km</span>
+<span class="tag">最长驾驶4h</span>
+<span class="tag">黑独山可选</span>
+<span class="tag">雪封有备选</span>
+</div>
+</div>
+
+<div class="stats">
+<div class="stat-card"><div class="val">~1,700</div><div class="lbl">总里程 km</div></div>
+<div class="stat-card"><div class="val">21h</div><div class="lbl">纯驾驶时间</div></div>
+<div class="stat-card"><div class="val">~5,650</div><div class="lbl">人均预算 ¥</div></div>
+</div>
+
+<div id="itinerary" class="section">
+<div class="section-title">逐日行程</div>
+
+<div class="day-card">
+<div class="day-header">
+<div>
+<div class="day-label">Day 1 · 10月1日 周四</div>
+<div class="day-title">落地兰州 · 只吃逛不赶路</div>
+<div class="day-drive">67km / 1h</div>
+</div>
+<div class="day-badge" style="background:#4a7c59">轻松</div>
+</div>
+<div class="day-body">
+<div class="day-section"><h4>行程</h4><p>中川机场取车 → 城关区西关/中山桥旁
+正宁路/南关夜市吃逛
+黄河边看中山桥 + 白塔山夜景
+深夜可去24h牛肉面馆</p></div>
+<div class="day-section warn"><h4>提醒</h4><p>D1不进馆不赶路只吃逛 / 取车拍油表+划痕视频留证 / 正宁路17:30-凌晨1:00</p></div>
+</div>
+<div class="hotel-row"><span>住宿 兰州市区 · 西关/中山桥旁</span><strong>~300元</strong></div>
+</div>
+
+<div class="day-card">
+<div class="day-header">
+<div>
+<div class="day-label">Day 2 · 10月2日 周五</div>
+<div class="day-title">甘博 → 西宁藏博</div>
+<div class="day-drive">220km / 2h30m</div>
+</div>
+<div class="day-badge" style="background:#6b8c9e">适中</div>
+</div>
+<div class="day-body">
+<div class="day-section"><h4>行程</h4><p>8:30 甘肃省博物馆(铜奔马+彩陶)
+11:30 出馆 → 西关牛肉面
+12:30 出发 → 15:30 青海藏文化博物院
+南馆4F《彩绘大观》618m唐卡(60元)</p></div>
+<div class="day-section warn"><h4>提醒</h4><p>甘博提前3天9:00抢(9.29) / 国庆周一不闭正常开</p></div>
+</div>
+<div class="hotel-row"><span>住宿 西宁市区 · 城北/生物园</span><strong>~400元</strong></div>
+</div>
+
+<div class="day-card">
+<div class="day-header">
+<div>
+<div class="day-label">Day 3 · 10月3日 周六</div>
+<div class="day-title">西宁 → 青海湖 · 轻松环湖</div>
+<div class="day-drive">150km / 2h</div>
+</div>
+<div class="day-badge" style="background:#4a7c59">轻松</div>
+</div>
+<div class="day-body">
+<div class="day-section"><h4>行程</h4><p>9:00 西宁 → G109 → 青海湖
+不进二郎剑(性价比低) · 环湖东路自驾
+牧民小道20-50元/人进湖边拍照
+下午抵达刚察/西海镇（不住黑马河）</p></div>
+<div class="weather-badge">🌨️ 天气备选：如遇大风/暴雨 → 延后出发，上午西宁逛东关清真大寺+莫家街，午后放晴再走</div>
+</div>
+<div class="hotel-row"><span>住宿 刚察县/西海镇</span><strong>~350元</strong></div>
+</div>
+
+<div class="day-card">
+<div class="day-header">
+<div>
+<div class="day-label">Day 4 · 10月4日 周日</div>
+<div class="day-title">青海湖 → 德令哈 · 翻橡皮山</div>
+<div class="day-drive">280km / 3h</div>
+</div>
+<div class="day-badge" style="background:#6b8c9e">适中</div>
+</div>
+<div class="day-body">
+<div class="day-section"><h4>行程</h4><p>8:30 出发 → 翻橡皮山垭口 3817m
+提前查"青海交警"微博路况
+11:00 茶卡盐湖(可选，天气好才值得)
+14:30 德令哈 · 海子诗歌陈列馆
+可鲁克湖-托素湖(可选)</p></div>
+<div class="weather-badge">🌨️ 橡皮山降雪封路 → 方案A：G6高速绕行茶卡(+30km) / 方案B：退回西宁改走张掖→敦煌(+1天)</div>
+</div>
+<div class="hotel-row"><span>住宿 德令哈市区</span><strong>~400元</strong></div>
+</div>
+
+<div class="day-card">
+<div class="day-header">
+<div>
+<div class="day-label">Day 5 · 10月5日 周一 🟢</div>
+<div class="day-title">德令哈 → 大柴旦 · 最轻松日</div>
+<div class="day-drive">200km / 2h</div>
+</div>
+<div class="day-badge" style="background:#4a7c59">最轻松</div>
+</div>
+<div class="day-body">
+<div class="day-section"><h4>行程</h4><p>9:30 出发(睡到自然醒)
+11:30 抵达大柴旦入住
+14:00-17:00 翡翠湖（门票50+小火车60）
+2号站蒂芙尼蓝 → 心形湖 → 绿色盐湖
+黑独山可选：精力好+天气好 → 往返26km/40min
+累了/天气差 → 直接放弃，泡温泉(98元)</p></div>
+<div class="weather-badge">🌨️ 天气备选：大风降雨 → 黑独山景交停运 → 直接放弃！替代：大柴旦雪山温泉(98元) / 光影之城</div>
+</div>
+<div class="hotel-row"><span>住宿 大柴旦镇 ⚠️现在立刻订</span><strong>~700元</strong></div>
+</div>
+
+<div class="day-card">
+<div class="day-header">
+<div>
+<div class="day-label">Day 6 · 10月6日 周二</div>
+<div class="day-title">大柴旦 → 敦煌 · 翻当金山</div>
+<div class="day-drive">340km / 4h</div>
+</div>
+<div class="day-badge" style="background:#e67e22">最长驾驶</div>
+</div>
+<div class="day-body">
+<div class="day-section"><h4>行程</h4><p>出发前查当金山实时路况！
+8:00 大柴旦 → 翻当金山垭口 3648m
+低速档下坡避免刹车过热
+12:30 阿克塞午餐补给
+可选：石油小镇废墟
+14:00 抵达敦煌入住
+16:00 敦煌博物馆(免费)</p></div>
+<div class="weather-badge">⚠️ 当金山积雪暗冰 → 方案A：G3011高速绕行(+40km有除雪) / 方案B：退回大柴旦走青海湖北线(+1天)
+⚠️ D6当天8:00前必须确认路况！</div>
+</div>
+<div class="hotel-row"><span>住宿 敦煌市区 · 有免费停车场</span><strong>~600元</strong></div>
+</div>
+
+<div class="day-card">
+<div class="day-header">
+<div>
+<div class="day-label">Day 7 · 10月7日 周三</div>
+<div class="day-title">莫高窟 + 鸣沙山 · 文化日</div>
+<div class="day-drive">&lt;10km</div>
+</div>
+<div class="day-badge" style="background:#4a7c59">轻松</div>
+</div>
+<div class="day-body">
+<div class="day-section"><h4>行程</h4><p>⚠️ 9月6日 早上7:00抢A票！设闹钟⏰
+8:00 莫高窟A票(8洞窟+电影) 238元/人 · 游览约3h
+提前小程序录入身份证信息</p>
+12:00 回市区午餐
+15:30 鸣沙山月牙泉 110元
+骑骆驼100元(傍晚不排队)
+沙丘顶看日落(~18:30)</p></div>
+<div class="day-section warn"><h4>⚠️ 没抢到A票的补救方案</h4><p>退而求B类应急票(100元 4洞窟)
+→ 到窟区后可加购特窟路线(150~200元/窟)
+→ B票+特窟 ≈ A票体验
+→ 备选榆林窟较远(170km) 不优先</p></div>
+</div>
+<div class="hotel-row"><span>住宿 敦煌市区</span><strong>~600元</strong></div>
+</div>
+
+<div class="day-card">
+<div class="day-header">
+<div>
+<div class="day-label">Day 8 · 10月8日 周四</div>
+<div class="day-title">阳关 + 玉门关 → 还车飞走</div>
+<div class="day-drive">~330km / 4h</div>
+</div>
+<div class="day-badge" style="background:#6b8c9e">适中</div>
+</div>
+<div class="day-body">
+<div class="day-section"><h4>行程</h4><p>8:30 → 阳关 70km 烽燧通关文牒(70元)
+11:00 返敦煌午饭
+12:30 → 玉门关 90km 汉长城+河仓城(90元)
+15:30 返回市区加油洗车
+17:00 莫高机场还车(预留1h)</p></div>
+<div class="day-section warn"><h4>提醒</h4><p>航班建议18:00以后 / 早班机→只去阳关 / 西线全程无补给备水零食 / 还车预留1h验车</p></div>
+</div>
+</div>
+</div>
+
+<div id="risks" class="section">
+<div class="section-title">天气风险与备选方案</div>
+<div class="risk-grid">
+
+<div class="risk-card severe">
+<h4>橡皮山垭口(3817m) 降雪/暗冰</h4>
+<div class="meta">影响D4 · 概率：中 · 严重度：高</div>
+<p>方案A：改G6高速绕行茶卡（+30km，海拔低不易积雪）
+方案B：退回西宁走张掖→敦煌（+1天）
+行前：微博"青海交警" + 高德实时路况</p>
+</div>
+
+<div class="risk-card severe">
+<h4>当金山垭口(3648m) 积雪/暗冰/横风</h4>
+<div class="meta">影响D6 · 概率：中 · 严重度：高</div>
+<p>方案A：改G3011高速翻山（+40km，路况更好有除雪）
+方案B：退回大柴旦走青海湖北线（+1天）
+⚠️ D6当天8:00前必须确认路况！决策点在大柴旦</p>
+</div>
+
+<div class="risk-card moderate">
+<h4>黑独山 大风/降雨停运</h4>
+<div class="meta">影响D5 · 概率：低-中 · 严重度：低</div>
+<p>直接放弃黑独山（不累）
+替代1：大柴旦雪山温泉(15km/98元，露天泡池看雪山)
+替代2：光影之城拍照打卡</p>
+</div>
+
+
+<div class="risk-card moderate">
+<h4>G215冷湖段 无信号+无加油站</h4>
+<div class="meta">途经D6 · 非天气但致命</div>
+<p>出发前下载高德+百度离线地图（青甘全境）
+阿克塞务必满油！满油！满油！
+车上备2瓶矿泉水 + 充电宝
+车辆故障 → 122或保险道路救援（提前确认含拖车）</p>
+</div>
+
+<div class="risk-card low">
+<h4>青海湖沿线 持续大风+低温</h4>
+<div class="meta">影响D3 · 概率：高 · 严重度：低</div>
+<p>10月青海湖大风是常态，极少封路。羽绒服+防风冲锋衣+帽子手套备好。风大到无法下车 → 车里观景直接到德令哈。如遇极端暴雨 → 上午逛东关清真大寺+莫家街，午后放晴再出发。</p>
+</div>
+
+</div>
+</div>
+
+<div id="hotels" class="section">
+<div class="section-title">住宿建议 <span style="font-size:12px;color:var(--sub);font-weight:400">（每房/晚价格 · 双人一间）</span></div>
+<div class="hotel-list">
+
+<div class="hotel-item"><span>D1 兰州 · 西关/中山桥旁</span><strong>~300元</strong></div>
+<div class="hotel-item"><span>D2 西宁 · 城北/生物园</span><strong>~400元</strong></div>
+<div class="hotel-item" style="border-left:3px solid var(--green)"><span>D3 刚察/西海镇 🟢 不住黑马河</span><strong>~350元</strong></div>
+<div class="hotel-item"><span>D4 德令哈 · 市区</span><strong>~400元</strong></div>
+<div class="hotel-item" style="border-left:3px solid var(--red)"><span>D5 大柴旦 · 镇中心</span><strong>~700元</strong><span class="urgent">⚠️立刻订</span></div>
+<div class="hotel-item"><span>D6 敦煌 · 有免费停车场</span><strong>~600元</strong></div>
+<div class="hotel-item"><span>D7 敦煌 · 同上</span><strong>~600元</strong></div>
+<div class="hotel-item" style="background:var(--day-even);font-weight:700">
+<span>合计7晚（双人合计）</span><strong>~3,350元</strong>
+<span style="font-size:11px;color:var(--sub)">均480/晚·间 | 人均240/晚 | 原版人均325/晚</span>
+</div>
+
+</div>
+</div>
+
+<div id="budget" class="section">
+<div class="section-title">预算汇总</div>
+<div class="budget-table">
+
+<div class="budget-row"><span>租车（含全险）</span><span>2,800元 <span class="note">8天SUV</span></span></div>
+<div class="budget-row"><span>异地还车费</span><span>900元 <span class="note">兰州取·敦煌还</span></span></div>
+<div class="budget-row"><span>油费</span><span>1,200元 <span class="diff">省400</span></span></div>
+<div class="budget-row"><span>高速费</span><span>0 <span class="note">国庆免费</span></span></div>
+<div class="budget-row"><span>门票合计</span><span>~1,300元 <span class="diff">省300</span></span></div>
+<div class="budget-row"><span>住宿7晚</span><span>3,350元 <span class="diff">省1,150</span></span></div>
+<div class="budget-row"><span>餐饮</span><span>1,600元 <span class="note">8天×2人×100/天</span></span></div>
+<div class="budget-row"><span>其他（防沙鞋套等）</span><span>150元</span></div>
+<div class="budget-row"><span>双人合计</span><span>~11,300元 <span class="diff">人均约5,650元</span></span></div>
+
+</div>
+</div>
+
+<div id="tickets" class="section">
+<div class="section-title">抢票与预约清单（按时间排序）</div>
+
+<div class="ticket-item"><span>大柴旦住宿</span><span class="deadline">⚠️现在！立刻订</span></div>
+<div class="ticket-item"><span>租车（SUV · 兰州取敦煌还）</span><span class="deadline">现在比价下单</span></div>
+<div class="ticket-item"><span>莫高窟A票 · 10.6场次 238元/人</span><span class="deadline">⚠️9月6日 早上7:00</span></div>
+<div class="ticket-item" style="font-size:12px;color:#e67e22;padding-left:16px"><span>↳ 抢不到A → B类100元 + 现场加购特窟路线 ≈ A票体验</span></div>
+<div class="ticket-item"><span>甘肃省博物馆 · 10.2上午</span><span class="deadline">9月29日 9:00</span></div>
+<div class="ticket-item"><span>敦煌酒店 · 有停车位</span><span>9月中旬前</span></div>
+<div class="ticket-item"><span>敦煌博物馆</span><span>提前1天</span></div>
+<div class="ticket-item"><span>青海藏博(南馆) 60元</span><span>提前1天/现场</span></div>
+
+</div>
+
+<div id="gear" class="section">
+<div class="section-title">穿衣与装备（青海段夜间可破-3°C）</div>
+<div class="gear-grid">
+
+<div class="gear-item"><span>薄羽绒服/厚羽绒</span><span class="must">必带</span></div>
+<div class="gear-item"><span>抓绒衣/卫衣（叠穿中层）</span><span class="must">必带</span></div>
+<div class="gear-item"><span>防风冲锋衣（外层）</span><span class="must">必带</span></div>
+<div class="gear-item"><span>秋裤/保暖裤</span><span class="must">必带</span></div>
+<div class="gear-item"><span>防晒霜 SPF50+</span><span class="must">必带</span></div>
+<div class="gear-item"><span>墨镜+遮阳帽</span><span class="must">必带</span></div>
+<div class="gear-item"><span>手机防沙袋/密封袋</span><span class="must">必带</span></div>
+<div class="gear-item"><span>离线地图（提前下载）</span><span class="must">必带</span></div>
+<div class="gear-item"><span>身份证+驾驶证</span><span class="must">必带</span></div>
+<div class="gear-item"><span>充电宝 20000mAh+</span><span class="must">必带</span></div>
+<div class="gear-item"><span>保温水杯</span><span class="opt">建议</span></div>
+<div class="gear-item"><span>润唇膏+护手霜</span><span class="opt">建议</span></div>
+<div class="gear-item"><span>防沙鞋套</span><span class="opt">建议</span></div>
+<div class="gear-item"><span>防滑链</span><span class="opt">问租车行</span></div>
+<div class="gear-item"><span>现金零钱 ~500元</span><span class="opt">建议</span></div>
+<div class="gear-item"><span>氧气罐(小)</span><span class="opt">建议</span></div>
+<div class="gear-item"><span>常用药品</span><span class="opt">建议</span></div>
+
+</div>
+</div>
+
+
+
+<footer>
+国庆甘青自驾 · 舒适优化版 &nbsp;|&nbsp; 2026.10.1-10.8 &nbsp;|&nbsp; 兰州进 · 敦煌出<br>
+<span style="font-size:11px;color:var(--sub)">票价/住宿/交通信息请出行前通过官方渠道确认最新情况</span>
+</footer>
+
+<script>
+const sections = document.querySelectorAll('.section');
+const navLinks = document.querySelectorAll('nav a');
+function updateNav(){
+  let current = '';
+  sections.forEach(s => {
+    if(s.getBoundingClientRect().top < 120) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+}
+window.addEventListener('scroll', updateNav, {passive:true});
+document.querySelectorAll('nav a').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+});
+</script>
+
+</body>
+</html>
